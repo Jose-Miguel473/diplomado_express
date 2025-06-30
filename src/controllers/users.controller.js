@@ -1,4 +1,5 @@
 import { User } from '../models/user.js';
+import { Op } from 'sequelize';
 import { Task } from '../models/task.js';
 import logger from '../logs/logger.js';
 import { Status } from '../constants/index.js';
@@ -114,6 +115,46 @@ async function activeInactiveUser(req, res) {
   }
 }
 
+async function getUsersWithPagination(req, res, next) {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || '';
+    const orderBy = req.query.orderBy || 'id';
+    const orderDir = req.query.orderDir || 'DESC';
+
+    const offset = (page - 1) * limit;
+
+    const where = search
+      ? {
+          username: {
+            [Op.iLike]: `%${search}%`
+          }
+        }
+      : {};
+
+    const { count, rows } = await User.findAndCountAll({
+      where,
+      limit,
+      offset,
+      order: [[orderBy, orderDir.toUpperCase()]],
+      attributes: ['id', 'userName', 'status'],
+    });
+
+    const totalPages = Math.ceil(count / limit);
+
+    res.json({
+      total: count,
+      page,
+      pages: totalPages,
+      data: rows,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+
 async function getTasksByUser(req, res, next){
     const {id} = req.params;
     try {
@@ -136,4 +177,4 @@ async function getTasksByUser(req, res, next){
     }
 }
 
-export default { getUsers, generateUser, getUserById, updateUser, deleteUser, activeInactiveUser, getTasksByUser };
+export default { getUsers, generateUser, getUserById, updateUser, deleteUser, activeInactiveUser, getTasksByUser, getUsersWithPagination };

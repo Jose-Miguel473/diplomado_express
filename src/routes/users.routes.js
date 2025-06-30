@@ -15,6 +15,8 @@ router.route('/:id')
     .put(authenticate, userController.updateUser)
     .delete(authenticate, userController.deleteUser)
     .patch(authenticate, userController.activeInactiveUser);
+    
+router.get('/list/pagination', userController.getUsersWithPagination);
 
 router.get('/:id/tasks', authenticate, userController.getTasksByUser);
 export default router;
