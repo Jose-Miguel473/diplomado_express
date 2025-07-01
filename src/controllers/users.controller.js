@@ -8,7 +8,7 @@ import { encryptPassword } from '../common/bcrypt.js';
 async function getUsers(req, res) {
   try {
     const users = await User.findAll({
-      attributes: ['id', 'userName', 'userPassword', 'status'],
+      attributes: ['id', 'username', 'password', 'status'],
       order: [['id', 'DESC']],
       where: {
         status: Status.ACTIVE
@@ -22,11 +22,11 @@ async function getUsers(req, res) {
 }
 
 async function generateUser(req, res) {
-  const { userName, userPassword } = req.body;
+  const { username, password } = req.body;
   try {
     const user = await User.create({
-      userName,
-      userPassword,
+      username,
+      password,
     });
     res.json(user);
   } catch (error) {
@@ -51,16 +51,16 @@ async function getUserById(req, res) {
 
 async function updateUser(req, res) {
   const { id } = req.params;
-  const { userName, userPassword } = req.body;
+  const { username, password } = req.body;
   try {
 
-    if (!userName && !userPassword) {
+    if (!username && !password) {
       return res.status(404).json({ error: 'User not found' });
     }
-    const passwordEncryp = await encryptPassword(userPassword);
+    const passwordEncryp = await encryptPassword(password);
     const user = await User.update({
-      userName,
-      userPassword: passwordEncryp,
+      username,
+      password: passwordEncryp,
     }, {
       where: {
         id
@@ -138,7 +138,7 @@ async function getUsersWithPagination(req, res, next) {
       limit,
       offset,
       order: [[orderBy, orderDir.toUpperCase()]],
-      attributes: ['id', 'userName', 'status'],
+      attributes: ['id', 'username', 'status'],
     });
 
     const totalPages = Math.ceil(count / limit);
@@ -159,7 +159,7 @@ async function getTasksByUser(req, res, next){
     const {id} = req.params;
     try {
         const user = await User.findOne({
-            attributes: ['userName'],
+            attributes: ['username'],
             include:[{
                 model: Task,
                 attributes:['name','done'],

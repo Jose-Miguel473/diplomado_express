@@ -5,21 +5,21 @@ import jwt from 'jsonwebtoken';
 
 async function login(req, res, next){
     try {
-        const { userName, userPassword } = req.body;
+        const { username, password } = req.body;
         const user = await User.findOne({
-            where: {userName}
+            where: {username}
         });
 
         if (!user) {
             return res.status(401).json({ message: 'Invalid username or password' });
         }
 
-        // const passwordMatch = await user.comparePassword(userPassword);
+        // const passwordMatch = await user.comparePassword(password);
         // if (!passwordMatch) {
         //     return res.status(401).json({ message: 'Invalid username or password' });
         // }
         
-      const isMatch =  comparePassword(userPassword, user.userPassword);
+      const isMatch =  comparePassword(password, user.password);
 
       if (!isMatch) {
             return res.status(401).json({ message: 'Invalid username or password' });

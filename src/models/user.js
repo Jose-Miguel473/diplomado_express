@@ -11,7 +11,7 @@ export const User = sequelize.define('users', {
         primaryKey: true,
         autoIncrement: true
     },
-    userName: {
+    username: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
@@ -20,7 +20,7 @@ export const User = sequelize.define('users', {
             },
         }
     },
-    userPassword: {
+    password: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
@@ -47,7 +47,7 @@ Task.belongsTo(User);
 
 User.beforeCreate(async (user) => {
     try {
-        user.userPassword = await encryptPassword(user.userPassword);
+        user.password = await encryptPassword(user.password);
         
     } catch (error) {
         logger.error(error);
@@ -57,7 +57,7 @@ User.beforeCreate(async (user) => {
 
 // User.beforeUpdate(async (user) => {
 //     try {
-//         user.userPassword = await encryptPassword(user.userPassword);
+//         user.password = await encryptPassword(user.password);
         
 //     } catch (error) {
 //         logger.error(error);
