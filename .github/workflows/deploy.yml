@@ -4,7 +4,7 @@ on: push
 
 jobs:
   first_job:
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-latest
 
     steps: 
       - name: Hola mundo
